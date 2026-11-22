@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Palak paneer · Kookn</title>
+<style>body{max-width:40em;margin:auto;padding:1em;line-height:1.5}img{max-width:100%;height:auto}</style>
+
+<header>
+  <nav><a href="/">Kookn</a> · <a href="/recipes/">Recipes</a></nav>
+</header>
+
+<main>
+<article>
+  <h1>Palak paneer</h1>
+  <img src="/img/palak-paneer-1280.webp" srcset="/img/palak-paneer-640.webp 640w, /img/palak-paneer-1280.webp 1280w" sizes="(max-width: 40em) 100vw, 40em" width="1280" height="960" alt="Palak paneer with basmati rice and garlic naan on a white plate">
+  <p>Browned paneer in a spiced, creamy spinach sauce. Serve with rice and/or garlic naan.</p>
+  <p><small>Serves 3–4</small></p>
+
+  <h2>Ingredients</h2>
+  <ul>
+    <li><label><input type="checkbox"> 1 big or 2 small tomatoes</label></li>
+    <li><label><input type="checkbox"> 1 thumb-sized knob of ginger</label></li>
+    <li><label><input type="checkbox"> 4 cloves of garlic</label></li>
+    <li><label><input type="checkbox"> 1 small chilli (green &gt; red)</label></li>
+    <li><label><input type="checkbox"> 1 big or 2 small onions</label></li>
+    <li><label><input type="checkbox"> 1 lime</label></li>
+    <li><label><input type="checkbox"> 400–450 g paneer</label></li>
+    <li><label><input type="checkbox"> 500 g fresh spinach</label></li>
+    <li><label><input type="checkbox"> 10 cl cream (20% fat)</label></li>
+    <li><label><input type="checkbox"> High-heat cooking oil</label></li>
+    <li><label><input type="checkbox"> Garam masala</label></li>
+    <li><label><input type="checkbox"> Turmeric</label></li>
+    <li><label><input type="checkbox"> Coriander powder</label></li>
+    <li><label><input type="checkbox"> Ground cumin</label></li>
+    <li><label><input type="checkbox"> Red chilli flakes (optional, if you like some 🔥)</label></li>
+    <li><label><input type="checkbox"> Rice and/or garlic naan, to serve</label></li>
+  </ul>
+
+  <h2>Steps</h2>
+  <ol>
+    <li>Start bringing salted water to a boil.</li>
+    <li>Wash the spinach.</li>
+    <li>Chop the paneer into cubes.</li>
+    <li>If you have a mixer/blender, roughly chop the following; otherwise, chop them finely:
+      <ol type="a">
+        <li>garlic</li>
+        <li>ginger</li>
+        <li>tomatoes</li>
+        <li>onion</li>
+        <li>chilli</li>
+      </ol>
+    </li>
+    <li>Once the water is boiling, boil the spinach for 2 minutes, then immediately cool it under cold running water (blanching).</li>
+    <li>Heat some oil in a pan on high heat and add the paneer.</li>
+    <li>Season the paneer generously with salt.</li>
+    <li>Blast the paneer at max heat until it is nicely browned.</li>
+    <li>In a new pot, heat some oil and add the ginger, garlic, onion and a good amount of turmeric and salt.</li>
+    <li>Once everything has sweated down, add the tomatoes and chilli (and chilli flakes, if using).</li>
+    <li>This is a good time to start prepping the rice/naan.</li>
+    <li>Once everything is soft, add garam masala, ground cumin, coriander and salt to taste. Go for a strong flavour.</li>
+    <li>Let it sit for 1–2 minutes, then add the spinach to the pot.</li>
+    <li>Stir a bit.</li>
+    <li>If possible, use a mixer to get the texture you want; otherwise, stir until you get a nice consistency.</li>
+    <li>Salt if needed.</li>
+    <li>Add the cream and paneer.</li>
+    <li>Add salt and spices to taste.</li>
+    <li>Cover and let simmer on low heat for about 2 minutes.</li>
+    <li>Add lime juice to taste.</li>
+    <li>Drizzle some cream over the sauce for presentation.</li>
+    <li>Serve.</li>
+  </ol>
+</article>
+
+<section>
+  <h2>Your photos</h2>
+  <p>No photos yet. Made this? Share yours!</p>
+
+  <form method="post" action="/photos" enctype="multipart/form-data">
+    <p><label>Your name<br><input name="name" required maxlength="50"></label></p>
+    <p><label>Photos (max 3, JPEG/PNG/WebP)<br><input type="file" name="photos" accept="image/jpeg,image/png,image/webp" multiple required></label></p>
+    <p><button disabled>Upload</button> <small>(works once the server exists)</small></p>
+  </form>
+</section>
+
+<section>
+  <h2>Comments</h2>
+  <p>No comments yet.</p>
+
+  <form method="post" action="/comments">
+    <p><label>Name<br><input name="name" required maxlength="50"></label></p>
+    <p><label>Comment<br><textarea name="body" required maxlength="2000" rows="4" cols="40"></textarea></label></p>
+    <p><button disabled>Post comment</button> <small>(works once the server exists)</small></p>
+  </form>
+</section>
+</main>
+
+<footer><p><small>© 2026 Kookn</small></p></footer>
