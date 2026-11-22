@@ -1,8 +1,23 @@
 {
   "name": "kookn",
+  "main": "src/worker.js",
   "compatibility_date": "2026-11-17",
   "assets": {
     "directory": "./public",
-    "not_found_handling": "404-page"
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    // Only these paths go through the Worker; everything else is served as plain files.
+    "run_worker_first": ["/recipes/*", "/u/*", "/admin", "/admin/*"]
+  },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "kookn", "database_id": "adfa1128-2188-400e-ab8f-7ed7c54bb760" }
+  ],
+  "r2_buckets": [
+    { "binding": "PHOTOS", "bucket_name": "kookn-photos" }
+  ],
+  "images": { "binding": "IMAGES" },
+  "vars": {
+    // true = comments need your approval at /admin before they show up
+    "REQUIRE_APPROVAL": true
   }
 }

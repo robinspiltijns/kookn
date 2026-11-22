@@ -71,14 +71,15 @@
   </ol>
 </article>
 
-<section>
+<section id="comments">
   <h2>Vragen of leuke foto’s???</h2>
 
-  <form method="post" action="/comments" enctype="multipart/form-data">
+  <form method="post" enctype="multipart/form-data">
     <p><label>Name<br><input name="name" required maxlength="50"></label></p>
     <p><label>Comment<br><textarea name="body" maxlength="2000" rows="4" cols="40"></textarea></label></p>
     <p><label>Photo (optional, JPEG/PNG/WebP)<br><input type="file" name="photo" accept="image/jpeg,image/png,image/webp"></label></p>
-    <p><button disabled>Post</button> <small>(works once the server exists)</small></p>
+    <p hidden><label>Leave this empty<br><input name="website" tabindex="-1" autocomplete="off"></label></p>
+    <p><button>Post</button></p>
   </form>
 </section>
 </main>
