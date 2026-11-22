@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Lemon garlic pasta · Kookn</title>
+<style>body{max-width:40em;margin:auto;padding:1em;line-height:1.5}img{max-width:100%;height:auto}</style>
+
+<header>
+  <nav><a href="/">← Kookn</a></nav>
+</header>
+
+<main>
+<article>
+  <h1>Lemon garlic pasta</h1>
+  <img src="/img/lemon-garlic-pasta-1280.webp" srcset="/img/lemon-garlic-pasta-640.webp 640w, /img/lemon-garlic-pasta-1280.webp 1280w" sizes="(max-width: 40em) 100vw, 40em" width="1280" height="960" alt="Tagliatelle with lemon, garlic and chilli, topped with grated parmigiano and parsley">
+  <p>Garlic, chilli and lemon in olive oil and butter, finished with parmigiano and parsley.</p>
+
+  <h2>Ingredients</h2>
+  <ul>
+    <li><label><input type="checkbox"> 500 g pasta</label></li>
+    <li><label><input type="checkbox"> 2 cloves of garlic</label></li>
+    <li><label><input type="checkbox"> 1 red chilli</label></li>
+    <li><label><input type="checkbox"> Parsley</label></li>
+    <li><label><input type="checkbox"> Olive oil</label></li>
+    <li><label><input type="checkbox"> Butter</label></li>
+    <li><label><input type="checkbox"> 1 lemon</label></li>
+    <li><label><input type="checkbox"> Parmigiano</label></li>
+  </ul>
+  <p><small>Rule of thumb: ⅓ lemon per 250 g pasta.</small></p>
+
+  <h2>Steps</h2>
+  <ol>
+    <li>Cut the garlic and chilli.</li>
+    <li>Zest the lemon.</li>
+    <li>Boil the pasta.</li>
+    <li>Put olive oil in a pan and add the chilli, garlic and most of the zest.</li>
+    <li>Add the pasta to the pan.</li>
+    <li>Add butter.</li>
+    <li>Stir.</li>
+    <li>Add lemon juice.</li>
+    <li>Add parsley.</li>
+    <li>Add the rest of the lemon zest.</li>
+    <li>Add parm.</li>
+    <li>Add pasta water.</li>
+    <li>Taste.</li>
+  </ol>
+
+  <h2>Source</h2>
+  <p><a href="https://www.youtube.com/watch?v=SwDJi_PB-wY&amp;t=292s">Jamie Oliver on YouTube</a></p>
+</article>
+
+<section>
+  <h2>Your photos</h2>
+  <p>No photos yet. Made this? Share yours!</p>
+
+  <form method="post" action="/photos" enctype="multipart/form-data">
+    <p><label>Your name<br><input name="name" required maxlength="50"></label></p>
+    <p><label>Photos (max 3, JPEG/PNG/WebP)<br><input type="file" name="photos" accept="image/jpeg,image/png,image/webp" multiple required></label></p>
+    <p><button disabled>Upload</button> <small>(works once the server exists)</small></p>
+  </form>
+</section>
+
+<section>
+  <h2>Comments</h2>
+  <p>No comments yet.</p>
+
+  <form method="post" action="/comments">
+    <p><label>Name<br><input name="name" required maxlength="50"></label></p>
+    <p><label>Comment<br><textarea name="body" required maxlength="2000" rows="4" cols="40"></textarea></label></p>
+    <p><button disabled>Post comment</button> <small>(works once the server exists)</small></p>
+  </form>
+</section>
+</main>
+
+<footer><p><small>© 2026 Kookn</small></p></footer>
