@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Shakshuka · Kookn</title>
+<style>body{max-width:40em;margin:auto;padding:1em;line-height:1.5}img{max-width:100%;height:auto}</style>
+
+<header>
+  <nav><a href="/">Kookn</a> · <a href="/recipes/">Recipes</a></nav>
+</header>
+
+<main>
+<article>
+  <h1>Shakshuka</h1>
+  <p>Eggs poached in a spiced tomato and pepper sauce. One pan, 30 minutes.</p>
+  <img src="/img/shakshuka.svg" width="800" height="500" alt="Shakshuka in a cast-iron pan, four eggs in red tomato sauce">
+  <p><small>Serves 2 · Prep 10 min · Cook 20 min</small></p>
+
+  <h2>Ingredients</h2>
+  <ul>
+    <li><label><input type="checkbox"> 2 tbsp olive oil</label></li>
+    <li><label><input type="checkbox"> 1 onion, diced</label></li>
+    <li><label><input type="checkbox"> 1 red bell pepper, sliced</label></li>
+    <li><label><input type="checkbox"> 2 garlic cloves, chopped</label></li>
+    <li><label><input type="checkbox"> 1 tsp cumin</label></li>
+    <li><label><input type="checkbox"> 1 tsp smoked paprika</label></li>
+    <li><label><input type="checkbox"> 1 can (400 g) chopped tomatoes</label></li>
+    <li><label><input type="checkbox"> 4 eggs</label></li>
+    <li><label><input type="checkbox"> Salt, pepper, fresh parsley</label></li>
+  </ul>
+
+  <h2>Steps</h2>
+  <ol>
+    <li>Heat the oil in a wide pan over medium heat. Cook the onion and pepper until soft, about 6 minutes.</li>
+    <li>Add the garlic, cumin and paprika. Stir for 1 minute.</li>
+    <li>Pour in the tomatoes, season, and simmer for 10 minutes until thick.</li>
+    <li>Make 4 wells in the sauce and crack an egg into each. Cover and cook 5–7 minutes, until the whites are set.</li>
+    <li>Top with parsley and serve with bread.</li>
+  </ol>
+
+  <details>
+    <summary>Tips &amp; variations</summary>
+    <ul>
+      <li>Add crumbled feta in the last 2 minutes.</li>
+      <li>For runny yolks, take it off the heat as soon as the whites turn opaque.</li>
+    </ul>
+  </details>
+</article>
+
+<section>
+  <h2>Your photos</h2>
+  <p>
+    <a href="/img/u1.svg"><img src="/img/u1.svg" width="160" height="120" loading="lazy" alt="Shakshuka with feta, by Marie" title="With feta, by Marie"></a>
+    <a href="/img/u2.svg"><img src="/img/u2.svg" width="160" height="120" loading="lazy" alt="Green shakshuka, by Tom" title="Green version, by Tom"></a>
+    <a href="/img/u3.svg"><img src="/img/u3.svg" width="160" height="120" loading="lazy" alt="Shakshuka, by Lina" title="By Lina"></a>
+  </p>
+
+  <form method="post" action="/photos" enctype="multipart/form-data">
+    <p><label>Your name<br><input name="name" required maxlength="50"></label></p>
+    <p><label>Photos (max 3, JPEG/PNG/WebP)<br><input type="file" name="photos" accept="image/jpeg,image/png,image/webp" multiple required></label></p>
+    <p><button disabled>Upload</button> <small>(works once the server exists)</small></p>
+  </form>
+</section>
+
+<section>
+  <h2>Comments</h2>
+  <article>
+    <p><b>Marie</b> <small><time datetime="2026-11-20">20 Nov 2026</time></small></p>
+    <p>Made this on Sunday, added feta. Great!</p>
+  </article>
+
+  <form method="post" action="/comments">
+    <p><label>Name<br><input name="name" required maxlength="50"></label></p>
+    <p><label>Comment<br><textarea name="body" required maxlength="2000" rows="4" cols="40"></textarea></label></p>
+    <p><button disabled>Post comment</button> <small>(works once the server exists)</small></p>
+  </form>
+</section>
+</main>
+
+<footer><p><small>© 2026 Kookn</small></p></footer>
