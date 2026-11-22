@@ -15,7 +15,7 @@ export default {
     const path = url.pathname;
 
     if (path === "/" && (request.method === "GET" || request.method === "HEAD")) return homePage(request, env, url);
-    if (path === "/timeline" && (request.method === "GET" || request.method === "HEAD")) return timelinePage(request, env, url);
+    if (path === "/community" && (request.method === "GET" || request.method === "HEAD")) return communityPage(request, env, url);
     if (path.startsWith("/u/")) return servePhoto(path.slice(3), env);
     if (path === "/admin" || path.startsWith("/admin/")) return admin(request, env, url);
     if (path.startsWith("/recipes/")) {
@@ -93,12 +93,12 @@ async function recipeTitle(env, origin, slug) {
   return titles.get(slug);
 }
 
-// "Robin's Wok": title, comment, photo; everything links to the recipe page.
-async function postCard(c, env, origin, heading, withDate) {
+// Title ("Robin's Wok" or "Robin made Wok"), comment, photo; everything links to the recipe page.
+async function postCard(c, env, origin, heading, withDate, made = false) {
   const title = await recipeTitle(env, origin, c.recipe);
   if (!title) return "";
   const href = `/recipes/${c.recipe}`;
-  const who = c.name.endsWith("s") ? `${c.name}’` : `${c.name}’s`;
+  const who = made ? `${c.name} made` : c.name.endsWith("s") ? `${c.name}’` : `${c.name}’s`;
   let out = `<article>\n  <${heading}><a href="${href}">${esc(who)} ${title}</a></${heading}>\n`;
   if (withDate) {
     const date = new Date(c.created).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "Europe/Brussels" });
@@ -132,10 +132,10 @@ function homePage(request, env, url) {
   });
 }
 
-function timelinePage(request, env, url) {
-  return withMarker(request, env, "timeline", async () => {
+function communityPage(request, env, url) {
+  return withMarker(request, env, "community", async () => {
     const { results } = await (await db(env)).prepare(`SELECT ${POST_COLUMNS} FROM comments WHERE approved = 1 ORDER BY created DESC LIMIT 200`).all();
-    const cards = (await Promise.all(results.map((c) => postCard(c, env, url.origin, "h2", true)))).join("\n");
+    const cards = (await Promise.all(results.map((c) => postCard(c, env, url.origin, "h3", true, true)))).join("\n");
     return cards || "<p>No posts yet. Be the first: pick a recipe and share a photo or question!</p>\n";
   });
 }
