@@ -55,33 +55,26 @@ async function recipePage(request, env, url) {
   if (!slug || page.status !== 200 || !(page.headers.get("content-type") || "").includes("text/html")) return page;
 
   const { results } = await (await db(env))
-    .prepare("SELECT name, body, photo, photo_w, photo_h, created FROM comments WHERE recipe = ? AND approved = 1 ORDER BY created DESC")
+    .prepare("SELECT name, body, photo, photo_w, photo_h, created FROM comments WHERE recipe = ? AND approved = 1 ORDER BY created")
     .bind(slug)
     .all();
 
-  const posts = results.map(commentHtml).join("");
-  let notice = "";
+  let html = results.map(commentHtml).join("");
   const sent = url.searchParams.get("sent");
   if (sent) {
     const msg = env.REQUIRE_APPROVAL
       ? "Thanks! Your post will show up here once it's approved."
       : "Thanks! Your post is up.";
-    notice += `<p><b>${msg}</b></p>\n`;
+    html += `<p><b>${msg}</b></p>\n`;
   }
   const err = url.searchParams.get("error");
-  if (err && ERRORS[err]) notice += `<p><b>${ERRORS[err]}</b></p>\n`;
+  if (err && ERRORS[err]) html += `<p><b>${ERRORS[err]}</b></p>\n`;
 
   const headers = new Headers(page.headers);
   headers.set("Cache-Control", "no-cache");
   headers.delete("ETag");
   return new HTMLRewriter()
-    .on("form[method=post]", {
-      element(el) {
-        // Messages right above the form, posts (newest first) below it.
-        if (notice) el.before(notice, { html: true });
-        if (posts) el.after(posts, { html: true });
-      },
-    })
+    .on("form[method=post]", { element(el) { if (html) el.before(html, { html: true }); } })
     .transform(new Response(page.body, { status: 200, headers }));
 }
 
