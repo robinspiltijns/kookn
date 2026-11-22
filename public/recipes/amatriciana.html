@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Spaghetti amatriciana · Kookn</title>
+<style>body{max-width:40em;margin:auto;padding:1em;line-height:1.5}img{max-width:100%;height:auto}</style>
+
+<header>
+  <nav><a href="/">← Kookn</a></nav>
+</header>
+
+<main>
+<article>
+  <h1>Spaghetti amatriciana</h1>
+  <img src="/img/amatriciana-1280.webp" srcset="/img/amatriciana-640.webp 640w, /img/amatriciana-1280.webp 1280w" sizes="(max-width: 40em) 100vw, 40em" width="1280" height="960" alt="Spaghetti in tomato sauce with crispy bacon, grated cheese and basil leaves in a white bowl">
+  <p>Crispy bacon or guanciale, a smooth tomato sauce and plenty of pecorino.</p>
+
+  <h2>Ingredients</h2>
+  <ul>
+    <li><label><input type="checkbox"> 1 can of Elvea tomatoes (400 g), diced or whole, to blend. NOT the garlic/herb version</label></li>
+    <li><label><input type="checkbox"> 400 g bacon or guanciale</label></li>
+    <li><label><input type="checkbox"> 500 g pasta</label></li>
+    <li><label><input type="checkbox"> 200 g pecorino</label></li>
+    <li><label><input type="checkbox"> Salt</label></li>
+    <li><label><input type="checkbox"> Pepper</label></li>
+  </ul>
+
+  <h2>Steps</h2>
+  <ol>
+    <li>Blend the tomatoes.</li>
+    <li>Put the water on to boil.</li>
+    <li>Fry the bacon.</li>
+    <li>Add a bit of pepper to the bacon.</li>
+    <li>Once the water boils, put the pasta in the water and the tomatoes in the pan with the bacon.</li>
+    <li>Add pepper to the tomato sauce.</li>
+    <li>Let the tomato sauce cook down well.</li>
+    <li>When the pasta is almost done, add it to the pan.</li>
+    <li>Add pasta water and pecorino until the texture and taste are right.</li>
+    <li>Season with pepper and salt.</li>
+    <li>Serve.</li>
+  </ol>
+
+  <h2>Variations</h2>
+  <ul>
+    <li>Fry bell pepper hard and add it to the sauce.</li>
+    <li>Use mascarpone, parmigiano and basil instead of pecorino.</li>
+  </ul>
+</article>
+
+<section>
+  <h2>Your photos</h2>
+  <p>No photos yet. Made this? Share yours!</p>
+
+  <form method="post" action="/photos" enctype="multipart/form-data">
+    <p><label>Your name<br><input name="name" required maxlength="50"></label></p>
+    <p><label>Photos (max 3, JPEG/PNG/WebP)<br><input type="file" name="photos" accept="image/jpeg,image/png,image/webp" multiple required></label></p>
+    <p><button disabled>Upload</button> <small>(works once the server exists)</small></p>
+  </form>
+</section>
+
+<section>
+  <h2>Comments</h2>
+  <p>No comments yet.</p>
+
+  <form method="post" action="/comments">
+    <p><label>Name<br><input name="name" required maxlength="50"></label></p>
+    <p><label>Comment<br><textarea name="body" required maxlength="2000" rows="4" cols="40"></textarea></label></p>
+    <p><button disabled>Post comment</button> <small>(works once the server exists)</small></p>
+  </form>
+</section>
+</main>
+
+<footer><p><small>© 2026 Kookn</small></p></footer>
