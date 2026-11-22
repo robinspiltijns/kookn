@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Umami city noodles · Kookn</title>
+<style>body{max-width:40em;margin:auto;padding:1em;line-height:1.5}img{max-width:100%;height:auto}</style>
+
+<header>
+  <nav><a href="/">← Kookn</a></nav>
+</header>
+
+<main>
+<article>
+  <h1>Umami city noodles</h1>
+  <img src="/img/umami-noodles-1280.webp" srcset="/img/umami-noodles-640.webp 640w, /img/umami-noodles-1280.webp 1280w" sizes="(max-width: 40em) 100vw, 40em" width="1280" height="960" alt="Noodles with minced meat, peppers and chilli oil on a blue-patterned plate">
+  <p>Mince and noodles in a peanut butter, soy and crispy chilli oil sauce. One wok.</p>
+
+  <h2>Ingredients</h2>
+  <ul>
+    <li><label><input type="checkbox"> Noodles (mie or udon are nice)</label></li>
+    <li><label><input type="checkbox"> Minced meat (pork/beef/chicken/vegetarian or a combination are all fine)</label></li>
+    <li><label><input type="checkbox"> Peanut butter</label></li>
+    <li><label><input type="checkbox"> Soy sauce</label></li>
+    <li><label><input type="checkbox"> Crispy chilli oil (Laoganma, not sponsored)</label></li>
+    <li><label><input type="checkbox"> Rice vinegar</label></li>
+    <li><label><input type="checkbox"> Garlic</label></li>
+    <li><label><input type="checkbox"> Lime</label></li>
+    <li><label><input type="checkbox"> Optional: a bag of wok veggies (Chinese/Thai)</label></li>
+    <li><label><input type="checkbox"> Spring onion (for topping, but the white part can be used as wok veggies too)</label></li>
+    <li><label><input type="checkbox"> Neutral cooking oil</label></li>
+    <li><label><input type="checkbox"> Salt</label></li>
+  </ul>
+
+  <h2>Steps</h2>
+  <ol>
+    <li>Wok on, heat on, oil in.</li>
+    <li>Add the mince and salt.</li>
+    <li>Roughly chop the garlic.</li>
+    <li>Once the mince starts browning, but isn't fully done, add the veggies and garlic.</li>
+    <li>Stir once in a while until the veggies are almost done.</li>
+    <li>Deglaze with rice vinegar.</li>
+    <li>Let it cook until the sharpness of the rice vinegar is gone.</li>
+    <li>Add soy sauce, peanut butter and crispy chilli oil until you get a strong flavour and a good balance.
+      <ol type="a">
+        <li>For 3–4 people: ~2 tablespoons of peanut butter, 2 big teaspoons of chilli oil, and soy sauce until salty enough. You should taste the peanut butter.</li>
+      </ol>
+    </li>
+    <li>Add the noodles and mix.</li>
+    <li>Taste, and add soy sauce and chilli oil to taste (not more peanut butter: at this point it will clump).</li>
+    <li>Add lime juice.</li>
+    <li>Serve with spring onion on top.</li>
+  </ol>
+</article>
+
+<section>
+  <h2>Your photos</h2>
+  <p>No photos yet. Made this? Share yours!</p>
+
+  <form method="post" action="/photos" enctype="multipart/form-data">
+    <p><label>Your name<br><input name="name" required maxlength="50"></label></p>
+    <p><label>Photos (max 3, JPEG/PNG/WebP)<br><input type="file" name="photos" accept="image/jpeg,image/png,image/webp" multiple required></label></p>
+    <p><button disabled>Upload</button> <small>(works once the server exists)</small></p>
+  </form>
+</section>
+
+<section>
+  <h2>Comments</h2>
+  <p>No comments yet.</p>
+
+  <form method="post" action="/comments">
+    <p><label>Name<br><input name="name" required maxlength="50"></label></p>
+    <p><label>Comment<br><textarea name="body" required maxlength="2000" rows="4" cols="40"></textarea></label></p>
+    <p><button disabled>Post comment</button> <small>(works once the server exists)</small></p>
+  </form>
+</section>
+</main>
+
+<footer><p><small>© 2026 Kookn</small></p></footer>
