@@ -15,6 +15,7 @@ export default {
     const path = url.pathname;
 
     if (path === "/" && (request.method === "GET" || request.method === "HEAD")) return homePage(request, env, url);
+    if (path === "/timeline" && (request.method === "GET" || request.method === "HEAD")) return timelinePage(request, env, url);
     if (path.startsWith("/u/")) return servePhoto(path.slice(3), env);
     if (path === "/admin" || path.startsWith("/admin/")) return admin(request, env, url);
     if (path.startsWith("/recipes/")) {
@@ -79,39 +80,64 @@ async function recipePage(request, env, url) {
     .transform(new Response(page.body, { status: 200, headers }));
 }
 
-// ---------- home page: latest post as "Community highlight" ----------
+// ---------- home page highlight + timeline ----------
 
-async function homePage(request, env, url) {
+// Recipe titles, read from each recipe page's <h1> (cached per Worker instance).
+const titles = new Map();
+async function recipeTitle(env, origin, slug) {
+  if (!titles.has(slug)) {
+    const r = await env.ASSETS.fetch(new Request(`${origin}/recipes/${slug}`));
+    const m = r.status === 200 ? (await r.text()).match(/<h1>([^<]*)<\/h1>/) : null;
+    titles.set(slug, m ? m[1] : null);
+  }
+  return titles.get(slug);
+}
+
+// "Robin's Wok": title, comment, photo; everything links to the recipe page.
+async function postCard(c, env, origin, heading, withDate) {
+  const title = await recipeTitle(env, origin, c.recipe);
+  if (!title) return "";
+  const href = `/recipes/${c.recipe}`;
+  const who = c.name.endsWith("s") ? `${c.name}’` : `${c.name}’s`;
+  let out = `<article>\n  <${heading}><a href="${href}">${esc(who)} ${title}</a></${heading}>\n`;
+  if (withDate) {
+    const date = new Date(c.created).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "Europe/Brussels" });
+    out += `  <p><small><time datetime="${new Date(c.created).toISOString().slice(0, 10)}">${date}</time></small></p>\n`;
+  }
+  if (c.body) out += `  <p>${esc(c.body).replace(/\r?\n/g, "<br>")}</p>\n`;
+  if (c.photo) out += `  <p><a href="${href}"><img src="/u/${c.photo}-640.webp" width="${Math.round(c.photo_w / 2)}" height="${Math.round(c.photo_h / 2)}" loading="lazy" alt="Photo by ${esc(c.name)}"></a></p>\n`;
+  return out + "</article>\n";
+}
+
+async function withMarker(request, env, marker, build) {
   const page = await env.ASSETS.fetch(request);
   if (page.status !== 200) return page;
-
   let html = "";
-  try {
-    const c = await (await db(env))
-      .prepare("SELECT recipe, name, body, photo, photo_w, photo_h FROM comments WHERE approved = 1 ORDER BY created DESC LIMIT 1")
-      .first();
-    if (c) {
-      const recipe = await env.ASSETS.fetch(new Request(`${url.origin}/recipes/${c.recipe}`));
-      const m = recipe.status === 200 ? (await recipe.text()).match(/<h1>([^<]*)<\/h1>/) : null;
-      if (m) {
-        const href = `/recipes/${c.recipe}`;
-        const who = c.name.endsWith("s") ? `${c.name}’` : `${c.name}’s`;
-        html = `<section>\n  <h2>Community highlight</h2>\n  <h3><a href="${href}">${esc(who)} ${m[1]}</a></h3>\n`;
-        if (c.body) html += `  <p>${esc(c.body).replace(/\r?\n/g, "<br>")}</p>\n`;
-        if (c.photo) html += `  <p><a href="${href}"><img src="/u/${c.photo}-640.webp" width="${Math.round(c.photo_w / 2)}" height="${Math.round(c.photo_h / 2)}" alt="Photo by ${esc(c.name)}"></a></p>\n`;
-        html += "</section>\n";
-      }
-    }
-  } catch (e) {
-    console.error("highlight failed", e); // never break the home page over this
-  }
-
+  try { html = await build(); } catch (e) { console.error(marker, e); }
   const headers = new Headers(page.headers);
   headers.set("Cache-Control", "no-cache");
   headers.delete("ETag");
   return new HTMLRewriter()
-    .onDocument({ comments(c) { if (c.text.trim() === "community-highlight") html ? c.replace(html, { html: true }) : c.remove(); } })
+    .onDocument({ comments(c) { if (c.text.trim() === marker) html ? c.replace(html, { html: true }) : c.remove(); } })
     .transform(new Response(page.body, { status: 200, headers }));
+}
+
+const POST_COLUMNS = "recipe, name, body, photo, photo_w, photo_h, created";
+
+function homePage(request, env, url) {
+  return withMarker(request, env, "community-highlight", async () => {
+    const c = await (await db(env)).prepare(`SELECT ${POST_COLUMNS} FROM comments WHERE approved = 1 ORDER BY created DESC LIMIT 1`).first();
+    const card = c ? await postCard(c, env, url.origin, "h3", false) : "";
+    return card ? `<section>\n  <h2>Community highlight</h2>\n${card.replace('loading="lazy" ', "")}</section>\n` : "";
+  });
+}
+
+function timelinePage(request, env, url) {
+  return withMarker(request, env, "timeline", async () => {
+    const { results } = await (await db(env)).prepare(`SELECT ${POST_COLUMNS} FROM comments WHERE approved = 1 ORDER BY created DESC LIMIT 200`).all();
+    const cards = (await Promise.all(results.map((c) => postCard(c, env, url.origin, "h2", true)))).join("\n");
+    return cards || "<p>No posts yet. Be the first: pick a recipe and share a photo or question!</p>\n";
+  });
 }
 
 const ERRORS = {
