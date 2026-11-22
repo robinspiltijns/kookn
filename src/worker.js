@@ -128,7 +128,10 @@ function homePage(request, env, url) {
   return withMarker(request, env, "community-highlight", async () => {
     const c = await (await db(env)).prepare(`SELECT ${POST_COLUMNS} FROM comments WHERE approved = 1 ORDER BY created DESC LIMIT 1`).first();
     const card = c ? await postCard(c, env, url.origin, "h3", false) : "";
-    return card ? `<section>\n  <h2>Community highlight</h2>\n${card.replace('loading="lazy" ', "")}</section>\n` : "";
+    if (!card) return "";
+    const date = new Date(c.created).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "Europe/Brussels" });
+    const under = `  <p><small><time datetime="${new Date(c.created).toISOString().slice(0, 10)}">${date}</time> · <a href="/community">More from the community</a></small></p>\n`;
+    return `<section>\n  <h2>Community highlight</h2>\n${card.replace('loading="lazy" ', "").replace(/<\/article>\n$/, under + "</article>\n")}</section>\n`;
   });
 }
 
