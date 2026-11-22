@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Pasta alla carbonara · Kookn</title>
+<style>body{max-width:40em;margin:auto;padding:1em;line-height:1.5}img{max-width:100%;height:auto}</style>
+
+<header>
+  <nav><a href="/">← Kookn</a></nav>
+</header>
+
+<main>
+<article>
+  <h1>Pasta alla carbonara</h1>
+  <img src="/img/carbonara-1280.webp" srcset="/img/carbonara-640.webp 640w, /img/carbonara-1280.webp 1280w" sizes="(max-width: 40em) 100vw, 40em" width="1280" height="960" alt="Linguine carbonara with guanciale and black pepper in a plate with a red and green rim">
+  <p>Pecorino, eggs, crispy guanciale and lots of black pepper. No cream.</p>
+
+  <h2>Ingredients</h2>
+  <ul>
+    <li><label><input type="checkbox"> 200 g pecorino romano</label></li>
+    <li><label><input type="checkbox"> 6 eggs (3 whole, 3 yolks only)</label></li>
+    <li><label><input type="checkbox"> 500 g pasta (De Cecco linguine n°7 is a good starter pasta)</label></li>
+    <li><label><input type="checkbox"> 300 g guanciale/pancetta, or 400 g bacon</label></li>
+    <li><label><input type="checkbox"> Black pepper</label></li>
+    <li><label><input type="checkbox"> Salt (for the pasta water)</label></li>
+  </ul>
+
+  <h2>Steps</h2>
+  <ol>
+    <li>Put some water on to boil and add a generous amount of salt.</li>
+    <li>Grate the pecorino.</li>
+    <li>Add 3 yolks and 3 whole eggs to the grated pecorino. (A lot has already been said about the right ratio of yolks to whole eggs. Figure out what you like.)</li>
+    <li>Add some black pepper to the mixture.</li>
+    <li>Once the water boils, add the pasta.</li>
+    <li>Put a pan on high heat and add the bacon.</li>
+    <li>Once the pasta is done, add it to the bacon. Keep a cup of the pasta water to the side.</li>
+    <li>Mix the pasta and bacon until it has cooled down a bit.</li>
+    <li>Add the cheese mixture to the pan, with a bit of the pasta water.</li>
+    <li>Toss and mix. If the sauce is too thick, add more pasta water and keep mixing.</li>
+    <li>Top off with a generous amount of black pepper.</li>
+    <li>Serve.</li>
+  </ol>
+
+  <img src="/img/carbonara-table-640.webp" srcset="/img/carbonara-table-640.webp 640w, /img/carbonara-table-1280.webp 1280w" sizes="(max-width: 40em) 100vw, 40em" width="640" height="480" loading="lazy" alt="A big pan of carbonara being served at a dinner table with plates and wine glasses">
+  <p><small>Scales up nicely for a crowd.</small></p>
+</article>
+
+<section>
+  <h2>Your photos</h2>
+  <p>No photos yet. Made this? Share yours!</p>
+
+  <form method="post" action="/photos" enctype="multipart/form-data">
+    <p><label>Your name<br><input name="name" required maxlength="50"></label></p>
+    <p><label>Photos (max 3, JPEG/PNG/WebP)<br><input type="file" name="photos" accept="image/jpeg,image/png,image/webp" multiple required></label></p>
+    <p><button disabled>Upload</button> <small>(works once the server exists)</small></p>
+  </form>
+</section>
+
+<section>
+  <h2>Comments</h2>
+  <p>No comments yet.</p>
+
+  <form method="post" action="/comments">
+    <p><label>Name<br><input name="name" required maxlength="50"></label></p>
+    <p><label>Comment<br><textarea name="body" required maxlength="2000" rows="4" cols="40"></textarea></label></p>
+    <p><button disabled>Post comment</button> <small>(works once the server exists)</small></p>
+  </form>
+</section>
+</main>
+
+<footer><p><small>© 2026 Kookn</small></p></footer>
