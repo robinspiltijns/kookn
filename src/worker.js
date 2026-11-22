@@ -6,6 +6,7 @@ const MAX_BODY = 2000;
 const MAX_PHOTO_BYTES = 15 * 1024 * 1024;
 const PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const RATE_LIMIT = { posts: 5, minutes: 10 };
+const MAX_PENDING = 50;
 
 export default {
   async fetch(request, env) {
@@ -82,6 +83,7 @@ const ERRORS = {
   long: "That comment is too long (max 2000 characters).",
   photo: "That photo couldn't be used. Please send a JPEG, PNG or WebP under 15 MB.",
   slow: "You've posted a lot just now. Please try again in a few minutes.",
+  busy: "We can't take new posts right now. Please try again later.",
 };
 
 function commentHtml(c) {
@@ -130,6 +132,9 @@ async function postComment(request, env, url) {
   const since = Date.now() - RATE_LIMIT.minutes * 60_000;
   const recent = await d.prepare("SELECT COUNT(*) AS n FROM comments WHERE visitor = ? AND created > ?").bind(visitor, since).first("n");
   if (recent >= RATE_LIMIT.posts) return back("error=slow");
+  // Safety valve against floods: stop taking posts while too many are waiting for approval.
+  const waiting = await d.prepare("SELECT COUNT(*) AS n FROM comments WHERE approved = 0").first("n");
+  if (waiting >= MAX_PENDING) return back("error=busy");
 
   let photo = null, w = null, h = null;
   if (hasPhoto) {
