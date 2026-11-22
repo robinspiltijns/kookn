@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Cherry tomato pasta · Kookn</title>
+<style>body{max-width:40em;margin:auto;padding:1em;line-height:1.5}img{max-width:100%;height:auto}</style>
+
+<header>
+  <nav><a href="/">← Kookn</a></nav>
+</header>
+
+<main>
+<article>
+  <h1>Cherry tomato pasta</h1>
+  <img src="/img/cherry-tomato-pasta-1280.webp" srcset="/img/cherry-tomato-pasta-640.webp 640w, /img/cherry-tomato-pasta-1280.webp 1280w" sizes="(max-width: 40em) 100vw, 40em" width="1280" height="960" alt="Fusilli with a cherry tomato sauce and black pepper on a white plate with a gold rim">
+  <p>Cherry tomatoes cooked down with onion and garlic, made creamy with parmigiano and pasta water.</p>
+
+  <h2>Ingredients</h2>
+  <ul>
+    <li><label><input type="checkbox"> 500 g pasta</label></li>
+    <li><label><input type="checkbox"> 130 g parmigiano (a 200 g block)</label></li>
+    <li><label><input type="checkbox"> 500 g cherry tomatoes</label></li>
+    <li><label><input type="checkbox"> 1 big onion</label></li>
+    <li><label><input type="checkbox"> Garlic</label></li>
+    <li><label><input type="checkbox"> Black pepper</label></li>
+    <li><label><input type="checkbox"> Parsley</label></li>
+    <li><label><input type="checkbox"> Olive oil</label></li>
+    <li><label><input type="checkbox"> Salt</label></li>
+  </ul>
+
+  <h2>Steps</h2>
+  <ol>
+    <li>Dice the onion.</li>
+    <li>Slice the garlic.</li>
+    <li>Start boiling water with salt.</li>
+    <li>Put a big pan on the heat and add olive oil and the onion.</li>
+    <li>Once soft, add the garlic and salt.</li>
+    <li>30 seconds later, add the cherry tomatoes, black pepper and salt.</li>
+    <li>Boil the pasta.</li>
+    <li>Once the cherry tomatoes start to soften, squish them.</li>
+    <li>Cut the parsley.</li>
+    <li>Let the cherry tomatoes reduce until the pasta is done.</li>
+    <li>Add the pasta to the cherry tomatoes (keep the pasta water).</li>
+    <li>Add pasta water, parm, salt and black pepper until the taste and texture are nice.</li>
+    <li>Add the parsley.</li>
+    <li>Serve with parm.</li>
+  </ol>
+</article>
+
+<section>
+  <h2>Your photos</h2>
+  <p>No photos yet. Made this? Share yours!</p>
+
+  <form method="post" action="/photos" enctype="multipart/form-data">
+    <p><label>Your name<br><input name="name" required maxlength="50"></label></p>
+    <p><label>Photos (max 3, JPEG/PNG/WebP)<br><input type="file" name="photos" accept="image/jpeg,image/png,image/webp" multiple required></label></p>
+    <p><button disabled>Upload</button> <small>(works once the server exists)</small></p>
+  </form>
+</section>
+
+<section>
+  <h2>Comments</h2>
+  <p>No comments yet.</p>
+
+  <form method="post" action="/comments">
+    <p><label>Name<br><input name="name" required maxlength="50"></label></p>
+    <p><label>Comment<br><textarea name="body" required maxlength="2000" rows="4" cols="40"></textarea></label></p>
+    <p><button disabled>Post comment</button> <small>(works once the server exists)</small></p>
+  </form>
+</section>
+</main>
+
+<footer><p><small>© 2026 Kookn</small></p></footer>
