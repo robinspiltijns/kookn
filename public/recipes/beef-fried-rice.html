@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<title>Beef fried rice · Kookn</title>
+<style>body{max-width:40em;margin:auto;padding:1em;line-height:1.5}img{max-width:100%;height:auto}</style>
+
+<header>
+  <nav><a href="/">← Kookn</a></nav>
+</header>
+
+<main>
+<article>
+  <h1>Beef fried rice</h1>
+  <img src="/img/beef-fried-rice-1280.webp" srcset="/img/beef-fried-rice-640.webp 640w, /img/beef-fried-rice-1280.webp 1280w" sizes="(max-width: 40em) 100vw, 40em" width="1280" height="960" alt="A mound of beef fried rice topped with a fried egg and spring onion">
+  <p>Crispy fried rice with seared beef, topped with a sunny-side-up egg. Uses up old rice.</p>
+  <p><small>Serves 1</small></p>
+
+  <h2>Ingredients</h2>
+  <ul>
+    <li><label><input type="checkbox"> Cooking oil</label></li>
+    <li><label><input type="checkbox"> 3 cloves of garlic</label></li>
+    <li><label><input type="checkbox"> Beef</label></li>
+    <li><label><input type="checkbox"> Sesame oil</label></li>
+    <li><label><input type="checkbox"> Shallot</label></li>
+    <li><label><input type="checkbox"> Old cooked rice</label></li>
+    <li><label><input type="checkbox"> Eggs (1 or 2 per person)</label></li>
+    <li><label><input type="checkbox"> Optional: extra veggies/mushrooms/…</label></li>
+    <li><label><input type="checkbox"> Soy sauce</label></li>
+    <li><label><input type="checkbox"> Oyster sauce</label></li>
+    <li><label><input type="checkbox"> Rice vinegar</label></li>
+    <li><label><input type="checkbox"> Spring onion</label></li>
+  </ul>
+
+  <h2>Steps</h2>
+  <ol>
+    <li>Salt the beef.</li>
+    <li>Let the pan heat up.</li>
+    <li>Put oil in the pan.</li>
+    <li>Put in the beef.</li>
+    <li>Sear the beef and let it cook for 1–3 minutes, depending on preference.</li>
+    <li>If you're adding veggies, add them now and cook until almost done.</li>
+    <li>Turn down the heat.</li>
+    <li>Add the garlic and shallot.</li>
+    <li>Stir for 1–2 minutes.</li>
+    <li>Add some of the eggs (the others can be served on top).</li>
+    <li>Let it sit until the eggs are halfway done.</li>
+    <li>Add the rice to the pan and stir.</li>
+    <li>Add the sauces.</li>
+    <li>Stir it up a bit.</li>
+    <li>Press the rice flat in the pan and let it sit for a while (trying to make it crispy).</li>
+    <li>Serve with a sunny-side-up egg and spring onion on top.</li>
+  </ol>
+
+  <h2>Source</h2>
+  <p><a href="https://youtu.be/Dk0axPbD2pc">Original video on YouTube</a></p>
+</article>
+
+<section>
+  <h2>Your photos</h2>
+  <p>No photos yet. Made this? Share yours!</p>
+
+  <form method="post" action="/photos" enctype="multipart/form-data">
+    <p><label>Your name<br><input name="name" required maxlength="50"></label></p>
+    <p><label>Photos (max 3, JPEG/PNG/WebP)<br><input type="file" name="photos" accept="image/jpeg,image/png,image/webp" multiple required></label></p>
+    <p><button disabled>Upload</button> <small>(works once the server exists)</small></p>
+  </form>
+</section>
+
+<section>
+  <h2>Comments</h2>
+  <p>No comments yet.</p>
+
+  <form method="post" action="/comments">
+    <p><label>Name<br><input name="name" required maxlength="50"></label></p>
+    <p><label>Comment<br><textarea name="body" required maxlength="2000" rows="4" cols="40"></textarea></label></p>
+    <p><button disabled>Post comment</button> <small>(works once the server exists)</small></p>
+  </form>
+</section>
+</main>
+
+<footer><p><small>© 2026 Kookn</small></p></footer>
