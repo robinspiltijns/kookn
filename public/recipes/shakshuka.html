@@ -48,31 +48,13 @@
 </article>
 
 <section>
-  <h2>Your photos</h2>
-  <p>
-    <a href="/img/u1.svg"><img src="/img/u1.svg" width="160" height="120" loading="lazy" alt="Shakshuka with feta, by Marie" title="With feta, by Marie"></a>
-    <a href="/img/u2.svg"><img src="/img/u2.svg" width="160" height="120" loading="lazy" alt="Green shakshuka, by Tom" title="Green version, by Tom"></a>
-    <a href="/img/u3.svg"><img src="/img/u3.svg" width="160" height="120" loading="lazy" alt="Shakshuka, by Lina" title="By Lina"></a>
-  </p>
+  <h2>Vragen of leuke foto’s???</h2>
 
-  <form method="post" action="/photos" enctype="multipart/form-data">
-    <p><label>Your name<br><input name="name" required maxlength="50"></label></p>
-    <p><label>Photos (max 3, JPEG/PNG/WebP)<br><input type="file" name="photos" accept="image/jpeg,image/png,image/webp" multiple required></label></p>
-    <p><button disabled>Upload</button> <small>(works once the server exists)</small></p>
-  </form>
-</section>
-
-<section>
-  <h2>Comments</h2>
-  <article>
-    <p><b>Marie</b> <small><time datetime="2026-11-20">20 Nov 2026</time></small></p>
-    <p>Made this on Sunday, added feta. Great!</p>
-  </article>
-
-  <form method="post" action="/comments">
+  <form method="post" action="/comments" enctype="multipart/form-data">
     <p><label>Name<br><input name="name" required maxlength="50"></label></p>
-    <p><label>Comment<br><textarea name="body" required maxlength="2000" rows="4" cols="40"></textarea></label></p>
-    <p><button disabled>Post comment</button> <small>(works once the server exists)</small></p>
+    <p><label>Comment<br><textarea name="body" maxlength="2000" rows="4" cols="40"></textarea></label></p>
+    <p><label>Photo (optional, JPEG/PNG/WebP)<br><input type="file" name="photo" accept="image/jpeg,image/png,image/webp"></label></p>
+    <p><button disabled>Post</button> <small>(works once the server exists)</small></p>
   </form>
 </section>
 </main>
