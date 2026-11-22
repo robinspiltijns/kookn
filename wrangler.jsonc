@@ -18,6 +18,6 @@
   "images": { "binding": "IMAGES" },
   "vars": {
     // true = comments need your approval at /admin before they show up
-    "REQUIRE_APPROVAL": true
+    "REQUIRE_APPROVAL": false
   }
 }

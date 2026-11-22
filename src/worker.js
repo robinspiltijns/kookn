@@ -7,6 +7,7 @@ const MAX_PHOTO_BYTES = 15 * 1024 * 1024;
 const PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const RATE_LIMIT = { posts: 5, minutes: 10 };
 const MAX_PENDING = 50;
+const MAX_PER_DAY = 100; // site-wide, so a flood can't fill storage even when posts go live straight away
 
 export default {
   async fetch(request, env) {
@@ -135,6 +136,8 @@ async function postComment(request, env, url) {
   // Safety valve against floods: stop taking posts while too many are waiting for approval.
   const waiting = await d.prepare("SELECT COUNT(*) AS n FROM comments WHERE approved = 0").first("n");
   if (waiting >= MAX_PENDING) return back("error=busy");
+  const today = await d.prepare("SELECT COUNT(*) AS n FROM comments WHERE created > ?").bind(Date.now() - 86_400_000).first("n");
+  if (today >= MAX_PER_DAY) return back("error=busy");
 
   let photo = null, w = null, h = null;
   if (hasPhoto) {
