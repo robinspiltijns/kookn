@@ -39,6 +39,12 @@ async function db(env) {
         "visitor TEXT NOT NULL, created INTEGER NOT NULL)"
     );
     await env.DB.exec("CREATE INDEX IF NOT EXISTS comments_recipe ON comments (recipe, approved, created)");
+    await env.DB.exec(
+      "CREATE TABLE IF NOT EXISTS admin_sessions (token_hash TEXT PRIMARY KEY, family TEXT NOT NULL, " +
+        "expires INTEGER NOT NULL, revoked INTEGER, created INTEGER NOT NULL)"
+    );
+    await env.DB.exec("CREATE INDEX IF NOT EXISTS admin_sessions_family ON admin_sessions (family)");
+    await env.DB.exec("CREATE TABLE IF NOT EXISTS admin_login_fails (visitor TEXT NOT NULL, at INTEGER NOT NULL)");
     schemaReady = true;
   }
   return env.DB;
@@ -265,20 +271,165 @@ async function servePhoto(key, env) {
 }
 
 // ---------- admin ----------
+//
+// Login gives two cookies, both HttpOnly + Secure + SameSite=Strict, only sent to /admin:
+// - access token:  signed, valid 15 minutes, checked without touching the database.
+// - refresh token: random, valid 30 days, stored (hashed) in D1. When the access token has expired,
+//   the refresh token is swapped for a fresh pair ("rotation") and the 30 days start over.
+//   If an already-used refresh token shows up again, someone copied it: that whole login is cancelled.
+
+const ACCESS_TTL = 15 * 60_000;
+const REFRESH_TTL = 30 * 86_400_000;
+const ROTATION_GRACE = 60_000; // two tabs refreshing at once shouldn't log you out
+const LOGIN_FAILS = { max: 5, minutes: 15 };
+const COOKIE = "; Path=/admin; HttpOnly; Secure; SameSite=Strict";
+
+const enc = new TextEncoder();
+const b64url = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+const sha256 = async (str) => b64url(await crypto.subtle.digest("SHA-256", enc.encode(str)));
+const randomToken = () => b64url(crypto.getRandomValues(new Uint8Array(32)));
+
+// Signing key derived from ADMIN_PASSWORD: changing the password logs out every session.
+async function signingKey(env) {
+  return crypto.subtle.importKey("raw", enc.encode(`kookn-access|${env.ADMIN_PASSWORD}`), { name: "HMAC", hash: "SHA-256" }, false, ["sign", "verify"]);
+}
+async function makeAccess(env, family) {
+  const payload = b64url(enc.encode(JSON.stringify({ f: family, exp: Date.now() + ACCESS_TTL })));
+  const sig = b64url(await crypto.subtle.sign("HMAC", await signingKey(env), enc.encode(payload)));
+  return `${payload}.${sig}`;
+}
+async function checkAccess(env, token) {
+  const [payload, sig] = (token || "").split(".");
+  if (!payload || !sig) return false;
+  const expected = b64url(await crypto.subtle.sign("HMAC", await signingKey(env), enc.encode(payload)));
+  if (expected.length !== sig.length || !crypto.subtle.timingSafeEqual(enc.encode(expected), enc.encode(sig))) return false;
+  try {
+    const { exp } = JSON.parse(atob(payload.replace(/-/g, "+").replace(/_/g, "/")));
+    return exp > Date.now();
+  } catch { return false; }
+}
+
+function cookies(request) {
+  const out = {};
+  for (const part of (request.headers.get("Cookie") || "").split(";")) {
+    const i = part.indexOf("=");
+    if (i > 0) out[part.slice(0, i).trim()] = part.slice(i + 1).trim();
+  }
+  return out;
+}
+const setCookies = (access, refresh) => [
+  `kookn_access=${access}${COOKIE}; Max-Age=${ACCESS_TTL / 1000}`,
+  `kookn_refresh=${refresh}${COOKIE}; Max-Age=${REFRESH_TTL / 1000}`,
+];
+const clearCookies = () => [`kookn_access=${COOKIE}; Max-Age=0`, `kookn_refresh=${COOKIE}; Max-Age=0`];
+
+async function newSession(env, d, family) {
+  const refresh = randomToken();
+  await d.prepare("INSERT INTO admin_sessions (token_hash, family, expires, created) VALUES (?, ?, ?, ?)")
+    .bind(await sha256(refresh), family, Date.now() + REFRESH_TTL, Date.now()).run();
+  return setCookies(await makeAccess(env, family), refresh);
+}
+
+// Ends a login for good (logout or stolen token). revoked = 1 is far in the past, so the grace window never applies.
+function killFamily(d, family) {
+  return d.prepare("UPDATE admin_sessions SET revoked = 1 WHERE family = ?").bind(family).run();
+}
+
+// Returns { ok, setCookie } — setCookie holds new cookies when the refresh token was rotated.
+async function session(request, env, d) {
+  const c = cookies(request);
+  if (await checkAccess(env, c.kookn_access)) return { ok: true, setCookie: [] };
+  if (!c.kookn_refresh) return { ok: false, setCookie: [] };
+
+  const row = await d.prepare("SELECT * FROM admin_sessions WHERE token_hash = ?").bind(await sha256(c.kookn_refresh)).first();
+  const now = Date.now();
+  if (!row || row.expires < now) return { ok: false, setCookie: clearCookies() };
+  if (row.revoked) {
+    if (now - row.revoked < ROTATION_GRACE) return { ok: true, setCookie: [] };
+    // Reuse of an old refresh token: assume it was stolen and end that login everywhere.
+    await killFamily(d, row.family);
+    return { ok: false, setCookie: clearCookies() };
+  }
+  await d.prepare("UPDATE admin_sessions SET revoked = ? WHERE token_hash = ?").bind(now, row.token_hash).run();
+  await d.prepare("DELETE FROM admin_sessions WHERE expires < ?").bind(now).run();
+  return { ok: true, setCookie: await newSession(env, d, row.family) };
+}
+
+function adminHtml(title, body) {
+  return `<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<meta name="robots" content="noindex">
+<title>${title} · Kookn</title>
+<style>body{max-width:40em;margin:auto;padding:1em;line-height:1.5}img{max-width:100%;height:auto}</style>
+<nav><a href="/">← Kookn</a></nav>
+${body}`;
+}
+function htmlResponse(html, setCookie = [], status = 200) {
+  const headers = new Headers({ "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store", "X-Frame-Options": "DENY" });
+  for (const c of setCookie) headers.append("Set-Cookie", c);
+  return new Response(html, { status, headers });
+}
+function redirect(url, setCookie = []) {
+  const headers = new Headers({ Location: url, "Cache-Control": "no-store" });
+  for (const c of setCookie) headers.append("Set-Cookie", c);
+  return new Response(null, { status: 303, headers });
+}
+
+function loginPage(message = "") {
+  return adminHtml("Log in", `<h1>Admin</h1>
+${message ? `<p><b>${message}</b></p>\n` : ""}<form method="post" action="/admin/login">
+  <input type="text" name="username" value="admin" autocomplete="username" hidden>
+  <p><label>Password<br><input type="password" name="password" required autocomplete="current-password" autofocus></label></p>
+  <p><button>Log in</button></p>
+</form>
+`);
+}
 
 async function admin(request, env, url) {
   if (!env.ADMIN_PASSWORD) {
     return new Response("Admin is off: add a secret called ADMIN_PASSWORD to this Worker in the Cloudflare dashboard.", { status: 503 });
   }
-  if (!(await authorized(request, env))) {
-    return new Response("Login required", { status: 401, headers: { "WWW-Authenticate": 'Basic realm="Kookn admin", charset="UTF-8"' } });
-  }
   const d = await db(env);
+  const path = url.pathname.replace(/\/$/, "");
 
   if (request.method === "POST") {
-    // Only accept posts made from this site's own admin page.
+    // Only accept forms sent from this site itself.
     const origin = request.headers.get("Origin");
     if (origin && origin !== url.origin) return new Response("Forbidden", { status: 403 });
+  }
+
+  if (path === "/admin/login") {
+    if (request.method !== "POST") return redirect(`${url.origin}/admin`);
+    const visitor = await visitorId(request);
+    const since = Date.now() - LOGIN_FAILS.minutes * 60_000;
+    const fails = await d.prepare("SELECT COUNT(*) AS n FROM admin_login_fails WHERE visitor = ? AND at > ?").bind(visitor, since).first("n");
+    if (fails >= LOGIN_FAILS.max) return htmlResponse(loginPage(`Too many attempts. Try again in ${LOGIN_FAILS.minutes} minutes.`), [], 429);
+
+    const form = await request.formData();
+    const [a, b] = await Promise.all([(form.get("password") || "").toString(), env.ADMIN_PASSWORD].map((x) => crypto.subtle.digest("SHA-256", enc.encode(x))));
+    if (!crypto.subtle.timingSafeEqual(a, b)) {
+      await d.prepare("INSERT INTO admin_login_fails (visitor, at) VALUES (?, ?)").bind(visitor, Date.now()).run();
+      await d.prepare("DELETE FROM admin_login_fails WHERE at < ?").bind(since).run();
+      return htmlResponse(loginPage("Wrong password."), [], 401);
+    }
+    return redirect(`${url.origin}/admin`, await newSession(env, d, randomToken()));
+  }
+
+  if (path === "/admin/logout") {
+    const c = cookies(request);
+    if (request.method === "POST" && c.kookn_refresh) {
+      const row = await d.prepare("SELECT family FROM admin_sessions WHERE token_hash = ?").bind(await sha256(c.kookn_refresh)).first();
+      if (row) await killFamily(d, row.family);
+    }
+    return redirect(`${url.origin}/admin`, clearCookies());
+  }
+
+  const { ok, setCookie } = await session(request, env, d);
+  if (!ok) return htmlResponse(loginPage(), setCookie, 401);
+
+  if (request.method === "POST") {
     const form = await request.formData();
     const id = Number(form.get("id"));
     const action = form.get("action");
@@ -289,7 +440,7 @@ async function admin(request, env, url) {
       if (row && row.photo) await env.PHOTOS.delete([`${row.photo}-640.webp`, `${row.photo}-1280.webp`]);
       await d.prepare("DELETE FROM comments WHERE id = ?").bind(id).run();
     }
-    return Response.redirect(`${url.origin}/admin`, 303);
+    return redirect(`${url.origin}/admin`, setCookie);
   }
 
   const pending = (await d.prepare("SELECT * FROM comments WHERE approved = 0 ORDER BY created DESC").all()).results;
@@ -300,29 +451,11 @@ async function admin(request, env, url) {
     buttons.map(([a, label]) => `<form method="post" style="display:inline"><input type="hidden" name="id" value="${c.id}"><button name="action" value="${a}">${label}</button></form>`).join(" ") +
     "\n<hr>\n</article>\n";
 
-  const html = `<!DOCTYPE html>
-<html lang="en">
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width">
-<meta name="robots" content="noindex">
-<title>Admin · Kookn</title>
-<style>body{max-width:40em;margin:auto;padding:1em;line-height:1.5}img{max-width:100%;height:auto}</style>
-<nav><a href="/">← Kookn</a></nav>
-<h1>Admin</h1>
+  return htmlResponse(adminHtml("Admin", `<h1>Admin</h1>
+<form method="post" action="/admin/logout"><button>Log out</button></form>
 <h2>Waiting for approval (${pending.length})</h2>
 ${pending.map((c) => row(c, [["approve", "Approve"], ["delete", "Delete"]])).join("") || "<p>Nothing waiting.</p>"}
 <h2>Live (latest 50)</h2>
 ${live.map((c) => row(c, [["hide", "Hide"], ["delete", "Delete"]])).join("") || "<p>Nothing yet.</p>"}
-`;
-  return new Response(html, { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" } });
-}
-
-async function authorized(request, env) {
-  const h = request.headers.get("Authorization") || "";
-  if (!h.startsWith("Basic ")) return false;
-  let pass = "";
-  try { pass = atob(h.slice(6)).split(":").slice(1).join(":"); } catch { return false; }
-  const enc = new TextEncoder();
-  const [a, b] = await Promise.all([pass, env.ADMIN_PASSWORD].map((s) => crypto.subtle.digest("SHA-256", enc.encode(s))));
-  return crypto.subtle.timingSafeEqual(a, b);
+`), setCookie);
 }
